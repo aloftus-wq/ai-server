@@ -13,18 +13,17 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const SYSTEM = "You are a p5js coding assistant. Always write complete p5js sketches with setup and draw functions. Never write partial code. Put all code in one code block. Only answer coding questions.";
+
 app.post("/ask", async (req, res) => {
   try {
     const userMessage = req.body.message;
-
     const message = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 4096,
-      system:
-       system: "You are a p5.js coding assistant for high school students. Always write COMPLETE p5.js sketches from scratch - never write partial code or just functions. Every response with code must include the full sketch starting with function setup() and function draw(). Only use standard p5.js functions that work in the p5.js web editor at editor.p5js.org. Never use transparency with hex codes. Use fill() with four values for transparency instead. Make sure the code is complete and will run without errors. Put all code in one single code block. After the code block briefly explain what it does and any controls. Only answer coding questions.",
+      system: SYSTEM,
       messages: [{ role: "user", content: userMessage }],
     });
-
     res.json({ reply: message.content[0].text });
   } catch (err) {
     console.error(err);
@@ -33,6 +32,4 @@ app.post("/ask", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log("Server running on port " + PORT));
